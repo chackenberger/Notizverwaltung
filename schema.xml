@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="notizverwaltung" defaultIdMethod="native">
+    <table name="notiz" phpName="Notiz">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="besitzer_id" type="integer" required="true" />
+        <column name="projekt_id" type="integer" required="false" />
+        <column name="name" type="varchar" required="true" size="255" />
+        <column name="text" type="clob" required="true" />
+        <foreign-key foreignTable="person" phpName="Besitzer">
+            <reference local="besitzer_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="projekt" >
+            <reference local="projekt_id" foreign="id" />
+        </foreign-key>
+    </table>
+    <table name="projekt" phpName="Projekt">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" required="true" size="255" />
+        <column name="sdate" type="date" required="true" />
+        <column name="edate" type="date" required="true" />
+    </table>
+    <table name="person" phpName="Person">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" required="true" size="150" />
+        <column name="desc" type="varchar" required="true" size="255" />
+    </table>
+    <table name="todo_notiz" phpName="ToDoNotiz">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="notiz_id" type="integer" required="true" />
+        <column name="status" type="tinyint" required="true" />
+        <column name="prior" type="integer" required="true" />
+        <foreign-key foreignTable="notiz" >
+            <reference local="notiz_id" foreign="id" />
+        </foreign-key>
+    </table>
+    <table name="rezept" phpName="Rezept">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="notiz_id" type="integer" required="true" />
+        <foreign-key foreignTable="notiz" >
+            <reference local="notiz_id" foreign="id" />
+        </foreign-key>
+    </table>
+    <table name="person_projekt" isCrossRef="true" >
+        <column name="person_id" type="integer" primaryKey="true" />
+        <column name="projekt_id" type="integer" primaryKey="true" />
+        <foreign-key foreignTable="person" >
+            <reference local="person_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="projekt" >
+            <reference local="projekt_id" foreign="id" />
+        </foreign-key>
+    </table>
+    <table name="rezept_notiz" isCrossRef="true" >
+        <column name="rezept_id" type="integer" primaryKey="true" />
+        <column name="notiz_id" type="integer" primaryKey="true" />
+        <foreign-key foreignTable="rezept" >
+            <reference local="rezept_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="notiz" >
+            <reference local="notiz_id" foreign="id" />
+        </foreign-key>
+    </table>
+</database>
