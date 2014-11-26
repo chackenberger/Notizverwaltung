@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="notizverwaltung" defaultIdMethod="native">
+    <behavior name="timestampable" />
     <table name="notiz" phpName="Notiz">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
         <column name="besitzer_id" type="integer" required="true" />
