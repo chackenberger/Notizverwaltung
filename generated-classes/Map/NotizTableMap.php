@@ -59,7 +59,7 @@ class NotizTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class NotizTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
@@ -97,6 +97,16 @@ class NotizTableMap extends TableMap
     const COL_TEXT = 'notiz.text';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'notiz.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'notiz.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -108,11 +118,11 @@ class NotizTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'BesitzerId', 'ProjektId', 'Name', 'Text', ),
-        self::TYPE_CAMELNAME     => array('id', 'besitzerId', 'projektId', 'name', 'text', ),
-        self::TYPE_COLNAME       => array(NotizTableMap::COL_ID, NotizTableMap::COL_BESITZER_ID, NotizTableMap::COL_PROJEKT_ID, NotizTableMap::COL_NAME, NotizTableMap::COL_TEXT, ),
-        self::TYPE_FIELDNAME     => array('id', 'besitzer_id', 'projekt_id', 'name', 'text', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'BesitzerId', 'ProjektId', 'Name', 'Text', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'besitzerId', 'projektId', 'name', 'text', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(NotizTableMap::COL_ID, NotizTableMap::COL_BESITZER_ID, NotizTableMap::COL_PROJEKT_ID, NotizTableMap::COL_NAME, NotizTableMap::COL_TEXT, NotizTableMap::COL_CREATED_AT, NotizTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'besitzer_id', 'projekt_id', 'name', 'text', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -122,11 +132,11 @@ class NotizTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'BesitzerId' => 1, 'ProjektId' => 2, 'Name' => 3, 'Text' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'besitzerId' => 1, 'projektId' => 2, 'name' => 3, 'text' => 4, ),
-        self::TYPE_COLNAME       => array(NotizTableMap::COL_ID => 0, NotizTableMap::COL_BESITZER_ID => 1, NotizTableMap::COL_PROJEKT_ID => 2, NotizTableMap::COL_NAME => 3, NotizTableMap::COL_TEXT => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'besitzer_id' => 1, 'projekt_id' => 2, 'name' => 3, 'text' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'BesitzerId' => 1, 'ProjektId' => 2, 'Name' => 3, 'Text' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'besitzerId' => 1, 'projektId' => 2, 'name' => 3, 'text' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(NotizTableMap::COL_ID => 0, NotizTableMap::COL_BESITZER_ID => 1, NotizTableMap::COL_PROJEKT_ID => 2, NotizTableMap::COL_NAME => 3, NotizTableMap::COL_TEXT => 4, NotizTableMap::COL_CREATED_AT => 5, NotizTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'besitzer_id' => 1, 'projekt_id' => 2, 'name' => 3, 'text' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -151,6 +161,8 @@ class NotizTableMap extends TableMap
         $this->addForeignKey('projekt_id', 'ProjektId', 'INTEGER', 'projekt', 'id', false, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('text', 'Text', 'CLOB', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -165,6 +177,19 @@ class NotizTableMap extends TableMap
         $this->addRelation('RezeptNotiz', '\\RezeptNotiz', RelationMap::ONE_TO_MANY, array('id' => 'notiz_id', ), null, null, 'RezeptNotizs');
         $this->addRelation('Rezept', '\\Rezept', RelationMap::MANY_TO_MANY, array(), null, null, 'Rezepts');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -312,12 +337,16 @@ class NotizTableMap extends TableMap
             $criteria->addSelectColumn(NotizTableMap::COL_PROJEKT_ID);
             $criteria->addSelectColumn(NotizTableMap::COL_NAME);
             $criteria->addSelectColumn(NotizTableMap::COL_TEXT);
+            $criteria->addSelectColumn(NotizTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(NotizTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.besitzer_id');
             $criteria->addSelectColumn($alias . '.projekt_id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.text');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

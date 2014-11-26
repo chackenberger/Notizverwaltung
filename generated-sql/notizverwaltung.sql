@@ -16,6 +16,8 @@ CREATE TABLE `notiz`
     `projekt_id` INTEGER,
     `name` VARCHAR(255) NOT NULL,
     `text` LONGTEXT NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `notiz_fi_b10ca2` (`besitzer_id`),
     INDEX `notiz_fi_c4457c` (`projekt_id`),
@@ -39,6 +41,8 @@ CREATE TABLE `projekt`
     `name` VARCHAR(255) NOT NULL,
     `sdate` DATE NOT NULL,
     `edate` DATE NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -53,6 +57,8 @@ CREATE TABLE `person`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(150) NOT NULL,
     `desc` VARCHAR(255) NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -68,6 +74,8 @@ CREATE TABLE `todo_notiz`
     `notiz_id` INTEGER NOT NULL,
     `status` TINYINT NOT NULL,
     `prior` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `todo_notiz_fi_23e2e9` (`notiz_id`),
     CONSTRAINT `todo_notiz_fk_23e2e9`
@@ -85,6 +93,8 @@ CREATE TABLE `rezept`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `notiz_id` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `rezept_fi_23e2e9` (`notiz_id`),
     CONSTRAINT `rezept_fk_23e2e9`
@@ -102,6 +112,8 @@ CREATE TABLE `person_projekt`
 (
     `person_id` INTEGER NOT NULL,
     `projekt_id` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`person_id`,`projekt_id`),
     INDEX `person_projekt_fi_c4457c` (`projekt_id`),
     CONSTRAINT `person_projekt_fk_ee5b00`
@@ -122,6 +134,8 @@ CREATE TABLE `rezept_notiz`
 (
     `rezept_id` INTEGER NOT NULL,
     `notiz_id` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`rezept_id`,`notiz_id`),
     INDEX `rezept_notiz_fi_23e2e9` (`notiz_id`),
     CONSTRAINT `rezept_notiz_fk_c330c8`

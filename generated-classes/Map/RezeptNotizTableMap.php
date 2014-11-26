@@ -59,7 +59,7 @@ class RezeptNotizTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class RezeptNotizTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the rezept_id field
@@ -80,6 +80,16 @@ class RezeptNotizTableMap extends TableMap
      * the column name for the notiz_id field
      */
     const COL_NOTIZ_ID = 'rezept_notiz.notiz_id';
+
+    /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'rezept_notiz.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'rezept_notiz.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +103,11 @@ class RezeptNotizTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('RezeptId', 'NotizId', ),
-        self::TYPE_CAMELNAME     => array('rezeptId', 'notizId', ),
-        self::TYPE_COLNAME       => array(RezeptNotizTableMap::COL_REZEPT_ID, RezeptNotizTableMap::COL_NOTIZ_ID, ),
-        self::TYPE_FIELDNAME     => array('rezept_id', 'notiz_id', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('RezeptId', 'NotizId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('rezeptId', 'notizId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(RezeptNotizTableMap::COL_REZEPT_ID, RezeptNotizTableMap::COL_NOTIZ_ID, RezeptNotizTableMap::COL_CREATED_AT, RezeptNotizTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('rezept_id', 'notiz_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -107,11 +117,11 @@ class RezeptNotizTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('RezeptId' => 0, 'NotizId' => 1, ),
-        self::TYPE_CAMELNAME     => array('rezeptId' => 0, 'notizId' => 1, ),
-        self::TYPE_COLNAME       => array(RezeptNotizTableMap::COL_REZEPT_ID => 0, RezeptNotizTableMap::COL_NOTIZ_ID => 1, ),
-        self::TYPE_FIELDNAME     => array('rezept_id' => 0, 'notiz_id' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('RezeptId' => 0, 'NotizId' => 1, 'CreatedAt' => 2, 'UpdatedAt' => 3, ),
+        self::TYPE_CAMELNAME     => array('rezeptId' => 0, 'notizId' => 1, 'createdAt' => 2, 'updatedAt' => 3, ),
+        self::TYPE_COLNAME       => array(RezeptNotizTableMap::COL_REZEPT_ID => 0, RezeptNotizTableMap::COL_NOTIZ_ID => 1, RezeptNotizTableMap::COL_CREATED_AT => 2, RezeptNotizTableMap::COL_UPDATED_AT => 3, ),
+        self::TYPE_FIELDNAME     => array('rezept_id' => 0, 'notiz_id' => 1, 'created_at' => 2, 'updated_at' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -134,6 +144,8 @@ class RezeptNotizTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('rezept_id', 'RezeptId', 'INTEGER' , 'rezept', 'id', true, null, null);
         $this->addForeignPrimaryKey('notiz_id', 'NotizId', 'INTEGER' , 'notiz', 'id', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -144,6 +156,19 @@ class RezeptNotizTableMap extends TableMap
         $this->addRelation('Rezept', '\\Rezept', RelationMap::MANY_TO_ONE, array('rezept_id' => 'id', ), null, null);
         $this->addRelation('Notiz', '\\Notiz', RelationMap::MANY_TO_ONE, array('notiz_id' => 'id', ), null, null);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Adds an object to the instance pool.
@@ -350,9 +375,13 @@ class RezeptNotizTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(RezeptNotizTableMap::COL_REZEPT_ID);
             $criteria->addSelectColumn(RezeptNotizTableMap::COL_NOTIZ_ID);
+            $criteria->addSelectColumn(RezeptNotizTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(RezeptNotizTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.rezept_id');
             $criteria->addSelectColumn($alias . '.notiz_id');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

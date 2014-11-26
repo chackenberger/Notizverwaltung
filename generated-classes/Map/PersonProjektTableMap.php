@@ -59,7 +59,7 @@ class PersonProjektTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class PersonProjektTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the person_id field
@@ -80,6 +80,16 @@ class PersonProjektTableMap extends TableMap
      * the column name for the projekt_id field
      */
     const COL_PROJEKT_ID = 'person_projekt.projekt_id';
+
+    /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'person_projekt.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'person_projekt.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +103,11 @@ class PersonProjektTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('PersonId', 'ProjektId', ),
-        self::TYPE_CAMELNAME     => array('personId', 'projektId', ),
-        self::TYPE_COLNAME       => array(PersonProjektTableMap::COL_PERSON_ID, PersonProjektTableMap::COL_PROJEKT_ID, ),
-        self::TYPE_FIELDNAME     => array('person_id', 'projekt_id', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('PersonId', 'ProjektId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('personId', 'projektId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PersonProjektTableMap::COL_PERSON_ID, PersonProjektTableMap::COL_PROJEKT_ID, PersonProjektTableMap::COL_CREATED_AT, PersonProjektTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('person_id', 'projekt_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -107,11 +117,11 @@ class PersonProjektTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('PersonId' => 0, 'ProjektId' => 1, ),
-        self::TYPE_CAMELNAME     => array('personId' => 0, 'projektId' => 1, ),
-        self::TYPE_COLNAME       => array(PersonProjektTableMap::COL_PERSON_ID => 0, PersonProjektTableMap::COL_PROJEKT_ID => 1, ),
-        self::TYPE_FIELDNAME     => array('person_id' => 0, 'projekt_id' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('PersonId' => 0, 'ProjektId' => 1, 'CreatedAt' => 2, 'UpdatedAt' => 3, ),
+        self::TYPE_CAMELNAME     => array('personId' => 0, 'projektId' => 1, 'createdAt' => 2, 'updatedAt' => 3, ),
+        self::TYPE_COLNAME       => array(PersonProjektTableMap::COL_PERSON_ID => 0, PersonProjektTableMap::COL_PROJEKT_ID => 1, PersonProjektTableMap::COL_CREATED_AT => 2, PersonProjektTableMap::COL_UPDATED_AT => 3, ),
+        self::TYPE_FIELDNAME     => array('person_id' => 0, 'projekt_id' => 1, 'created_at' => 2, 'updated_at' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -134,6 +144,8 @@ class PersonProjektTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('person_id', 'PersonId', 'INTEGER' , 'person', 'id', true, null, null);
         $this->addForeignPrimaryKey('projekt_id', 'ProjektId', 'INTEGER' , 'projekt', 'id', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -144,6 +156,19 @@ class PersonProjektTableMap extends TableMap
         $this->addRelation('Person', '\\Person', RelationMap::MANY_TO_ONE, array('person_id' => 'id', ), null, null);
         $this->addRelation('Projekt', '\\Projekt', RelationMap::MANY_TO_ONE, array('projekt_id' => 'id', ), null, null);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Adds an object to the instance pool.
@@ -350,9 +375,13 @@ class PersonProjektTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(PersonProjektTableMap::COL_PERSON_ID);
             $criteria->addSelectColumn(PersonProjektTableMap::COL_PROJEKT_ID);
+            $criteria->addSelectColumn(PersonProjektTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(PersonProjektTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.person_id');
             $criteria->addSelectColumn($alias . '.projekt_id');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

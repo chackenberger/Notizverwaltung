@@ -59,7 +59,7 @@ class ToDoNotizTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ToDoNotizTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -92,6 +92,16 @@ class ToDoNotizTableMap extends TableMap
     const COL_PRIOR = 'todo_notiz.prior';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'todo_notiz.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'todo_notiz.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -103,11 +113,11 @@ class ToDoNotizTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'NotizId', 'Status', 'Prior', ),
-        self::TYPE_CAMELNAME     => array('id', 'notizId', 'status', 'prior', ),
-        self::TYPE_COLNAME       => array(ToDoNotizTableMap::COL_ID, ToDoNotizTableMap::COL_NOTIZ_ID, ToDoNotizTableMap::COL_STATUS, ToDoNotizTableMap::COL_PRIOR, ),
-        self::TYPE_FIELDNAME     => array('id', 'notiz_id', 'status', 'prior', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'NotizId', 'Status', 'Prior', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'notizId', 'status', 'prior', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ToDoNotizTableMap::COL_ID, ToDoNotizTableMap::COL_NOTIZ_ID, ToDoNotizTableMap::COL_STATUS, ToDoNotizTableMap::COL_PRIOR, ToDoNotizTableMap::COL_CREATED_AT, ToDoNotizTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'notiz_id', 'status', 'prior', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -117,11 +127,11 @@ class ToDoNotizTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'NotizId' => 1, 'Status' => 2, 'Prior' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'notizId' => 1, 'status' => 2, 'prior' => 3, ),
-        self::TYPE_COLNAME       => array(ToDoNotizTableMap::COL_ID => 0, ToDoNotizTableMap::COL_NOTIZ_ID => 1, ToDoNotizTableMap::COL_STATUS => 2, ToDoNotizTableMap::COL_PRIOR => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'notiz_id' => 1, 'status' => 2, 'prior' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'NotizId' => 1, 'Status' => 2, 'Prior' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'notizId' => 1, 'status' => 2, 'prior' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(ToDoNotizTableMap::COL_ID => 0, ToDoNotizTableMap::COL_NOTIZ_ID => 1, ToDoNotizTableMap::COL_STATUS => 2, ToDoNotizTableMap::COL_PRIOR => 3, ToDoNotizTableMap::COL_CREATED_AT => 4, ToDoNotizTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'notiz_id' => 1, 'status' => 2, 'prior' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -145,6 +155,8 @@ class ToDoNotizTableMap extends TableMap
         $this->addForeignKey('notiz_id', 'NotizId', 'INTEGER', 'notiz', 'id', true, null, null);
         $this->addColumn('status', 'Status', 'TINYINT', true, null, null);
         $this->addColumn('prior', 'Prior', 'INTEGER', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -154,6 +166,19 @@ class ToDoNotizTableMap extends TableMap
     {
         $this->addRelation('Notiz', '\\Notiz', RelationMap::MANY_TO_ONE, array('notiz_id' => 'id', ), null, null);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -300,11 +325,15 @@ class ToDoNotizTableMap extends TableMap
             $criteria->addSelectColumn(ToDoNotizTableMap::COL_NOTIZ_ID);
             $criteria->addSelectColumn(ToDoNotizTableMap::COL_STATUS);
             $criteria->addSelectColumn(ToDoNotizTableMap::COL_PRIOR);
+            $criteria->addSelectColumn(ToDoNotizTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(ToDoNotizTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.notiz_id');
             $criteria->addSelectColumn($alias . '.status');
             $criteria->addSelectColumn($alias . '.prior');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

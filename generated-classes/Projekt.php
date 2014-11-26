@@ -15,16 +15,4 @@ use Base\Projekt as BaseProjekt;
 class Projekt extends BaseProjekt
 {
 
-    function __construct($teilnehmer) {
-        parent::__construct();
-        $isarray = is_array($teilnehmer);
-        if($teilnehmer === null || (!$isarray && !($teilnehmer instanceof Person)))
-            throw new InvalidArgumentException("teilnehmer must be a Person or an array of Person");
-        if($isarray) {
-            foreach ($teilnehmer as $t) {
-                $this->addPerson($t);
-            }
-        }else
-            $this->addPerson($teilnehmer);
-    }
 }

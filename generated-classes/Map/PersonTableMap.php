@@ -59,7 +59,7 @@ class PersonTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class PersonTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -87,6 +87,16 @@ class PersonTableMap extends TableMap
     const COL_DESC = 'person.desc';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'person.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'person.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -98,11 +108,11 @@ class PersonTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Desc', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'desc', ),
-        self::TYPE_COLNAME       => array(PersonTableMap::COL_ID, PersonTableMap::COL_NAME, PersonTableMap::COL_DESC, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'desc', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Desc', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'desc', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PersonTableMap::COL_ID, PersonTableMap::COL_NAME, PersonTableMap::COL_DESC, PersonTableMap::COL_CREATED_AT, PersonTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'desc', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -112,11 +122,11 @@ class PersonTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Desc' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'desc' => 2, ),
-        self::TYPE_COLNAME       => array(PersonTableMap::COL_ID => 0, PersonTableMap::COL_NAME => 1, PersonTableMap::COL_DESC => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'desc' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Desc' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'desc' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(PersonTableMap::COL_ID => 0, PersonTableMap::COL_NAME => 1, PersonTableMap::COL_DESC => 2, PersonTableMap::COL_CREATED_AT => 3, PersonTableMap::COL_UPDATED_AT => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'desc' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -139,6 +149,8 @@ class PersonTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 150, null);
         $this->addColumn('desc', 'Desc', 'VARCHAR', true, 255, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -150,6 +162,19 @@ class PersonTableMap extends TableMap
         $this->addRelation('PersonProjekt', '\\PersonProjekt', RelationMap::ONE_TO_MANY, array('id' => 'person_id', ), null, null, 'PersonProjekts');
         $this->addRelation('Projekt', '\\Projekt', RelationMap::MANY_TO_MANY, array(), null, null, 'Projekts');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -295,10 +320,14 @@ class PersonTableMap extends TableMap
             $criteria->addSelectColumn(PersonTableMap::COL_ID);
             $criteria->addSelectColumn(PersonTableMap::COL_NAME);
             $criteria->addSelectColumn(PersonTableMap::COL_DESC);
+            $criteria->addSelectColumn(PersonTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(PersonTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.desc');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

@@ -22,9 +22,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildRezeptQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildRezeptQuery orderByNotizId($order = Criteria::ASC) Order by the notiz_id column
+ * @method     ChildRezeptQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildRezeptQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildRezeptQuery groupById() Group by the id column
  * @method     ChildRezeptQuery groupByNotizId() Group by the notiz_id column
+ * @method     ChildRezeptQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildRezeptQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildRezeptQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildRezeptQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -45,10 +49,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildRezept findOneById(int $id) Return the first ChildRezept filtered by the id column
  * @method     ChildRezept findOneByNotizId(int $notiz_id) Return the first ChildRezept filtered by the notiz_id column
+ * @method     ChildRezept findOneByCreatedAt(string $created_at) Return the first ChildRezept filtered by the created_at column
+ * @method     ChildRezept findOneByUpdatedAt(string $updated_at) Return the first ChildRezept filtered by the updated_at column
  *
  * @method     ChildRezept[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildRezept objects based on current ModelCriteria
  * @method     ChildRezept[]|ObjectCollection findById(int $id) Return ChildRezept objects filtered by the id column
  * @method     ChildRezept[]|ObjectCollection findByNotizId(int $notiz_id) Return ChildRezept objects filtered by the notiz_id column
+ * @method     ChildRezept[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildRezept objects filtered by the created_at column
+ * @method     ChildRezept[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildRezept objects filtered by the updated_at column
  * @method     ChildRezept[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -140,7 +148,7 @@ abstract class RezeptQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, notiz_id FROM rezept WHERE id = :p0';
+        $sql = 'SELECT id, notiz_id, created_at, updated_at FROM rezept WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -312,6 +320,92 @@ abstract class RezeptQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(RezeptTableMap::COL_NOTIZ_ID, $notizId, $comparison);
+    }
+
+    /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(RezeptTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(RezeptTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(RezeptTableMap::COL_CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(RezeptTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(RezeptTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(RezeptTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -556,6 +650,72 @@ abstract class RezeptQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(RezeptTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(RezeptTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(RezeptTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(RezeptTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(RezeptTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildRezeptQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(RezeptTableMap::COL_CREATED_AT);
     }
 
 } // RezeptQuery

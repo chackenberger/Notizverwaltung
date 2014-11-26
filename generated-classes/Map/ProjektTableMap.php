@@ -59,7 +59,7 @@ class ProjektTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ProjektTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -92,6 +92,16 @@ class ProjektTableMap extends TableMap
     const COL_EDATE = 'projekt.edate';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'projekt.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'projekt.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -103,11 +113,11 @@ class ProjektTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Sdate', 'Edate', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'sdate', 'edate', ),
-        self::TYPE_COLNAME       => array(ProjektTableMap::COL_ID, ProjektTableMap::COL_NAME, ProjektTableMap::COL_SDATE, ProjektTableMap::COL_EDATE, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'sdate', 'edate', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Sdate', 'Edate', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'sdate', 'edate', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjektTableMap::COL_ID, ProjektTableMap::COL_NAME, ProjektTableMap::COL_SDATE, ProjektTableMap::COL_EDATE, ProjektTableMap::COL_CREATED_AT, ProjektTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'sdate', 'edate', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -117,11 +127,11 @@ class ProjektTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Sdate' => 2, 'Edate' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'sdate' => 2, 'edate' => 3, ),
-        self::TYPE_COLNAME       => array(ProjektTableMap::COL_ID => 0, ProjektTableMap::COL_NAME => 1, ProjektTableMap::COL_SDATE => 2, ProjektTableMap::COL_EDATE => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'sdate' => 2, 'edate' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Sdate' => 2, 'Edate' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'sdate' => 2, 'edate' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(ProjektTableMap::COL_ID => 0, ProjektTableMap::COL_NAME => 1, ProjektTableMap::COL_SDATE => 2, ProjektTableMap::COL_EDATE => 3, ProjektTableMap::COL_CREATED_AT => 4, ProjektTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'sdate' => 2, 'edate' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -145,6 +155,8 @@ class ProjektTableMap extends TableMap
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('sdate', 'Sdate', 'DATE', true, null, null);
         $this->addColumn('edate', 'Edate', 'DATE', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -156,6 +168,19 @@ class ProjektTableMap extends TableMap
         $this->addRelation('PersonProjekt', '\\PersonProjekt', RelationMap::ONE_TO_MANY, array('id' => 'projekt_id', ), null, null, 'PersonProjekts');
         $this->addRelation('Person', '\\Person', RelationMap::MANY_TO_MANY, array(), null, null, 'People');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -302,11 +327,15 @@ class ProjektTableMap extends TableMap
             $criteria->addSelectColumn(ProjektTableMap::COL_NAME);
             $criteria->addSelectColumn(ProjektTableMap::COL_SDATE);
             $criteria->addSelectColumn(ProjektTableMap::COL_EDATE);
+            $criteria->addSelectColumn(ProjektTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(ProjektTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.sdate');
             $criteria->addSelectColumn($alias . '.edate');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

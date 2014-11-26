@@ -22,9 +22,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildPersonProjektQuery orderByPersonId($order = Criteria::ASC) Order by the person_id column
  * @method     ChildPersonProjektQuery orderByProjektId($order = Criteria::ASC) Order by the projekt_id column
+ * @method     ChildPersonProjektQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildPersonProjektQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildPersonProjektQuery groupByPersonId() Group by the person_id column
  * @method     ChildPersonProjektQuery groupByProjektId() Group by the projekt_id column
+ * @method     ChildPersonProjektQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildPersonProjektQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildPersonProjektQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildPersonProjektQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -45,10 +49,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildPersonProjekt findOneByPersonId(int $person_id) Return the first ChildPersonProjekt filtered by the person_id column
  * @method     ChildPersonProjekt findOneByProjektId(int $projekt_id) Return the first ChildPersonProjekt filtered by the projekt_id column
+ * @method     ChildPersonProjekt findOneByCreatedAt(string $created_at) Return the first ChildPersonProjekt filtered by the created_at column
+ * @method     ChildPersonProjekt findOneByUpdatedAt(string $updated_at) Return the first ChildPersonProjekt filtered by the updated_at column
  *
  * @method     ChildPersonProjekt[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildPersonProjekt objects based on current ModelCriteria
  * @method     ChildPersonProjekt[]|ObjectCollection findByPersonId(int $person_id) Return ChildPersonProjekt objects filtered by the person_id column
  * @method     ChildPersonProjekt[]|ObjectCollection findByProjektId(int $projekt_id) Return ChildPersonProjekt objects filtered by the projekt_id column
+ * @method     ChildPersonProjekt[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildPersonProjekt objects filtered by the created_at column
+ * @method     ChildPersonProjekt[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildPersonProjekt objects filtered by the updated_at column
  * @method     ChildPersonProjekt[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -140,7 +148,7 @@ abstract class PersonProjektQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT person_id, projekt_id FROM person_projekt WHERE person_id = :p0 AND projekt_id = :p1';
+        $sql = 'SELECT person_id, projekt_id, created_at, updated_at FROM person_projekt WHERE person_id = :p0 AND projekt_id = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -326,6 +334,92 @@ abstract class PersonProjektQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(PersonProjektTableMap::COL_PROJEKT_ID, $projektId, $comparison);
+    }
+
+    /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(PersonProjektTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(PersonProjektTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(PersonProjektTableMap::COL_CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(PersonProjektTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(PersonProjektTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(PersonProjektTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -559,6 +653,72 @@ abstract class PersonProjektQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(PersonProjektTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(PersonProjektTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(PersonProjektTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(PersonProjektTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(PersonProjektTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildPersonProjektQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(PersonProjektTableMap::COL_CREATED_AT);
     }
 
 } // PersonProjektQuery
