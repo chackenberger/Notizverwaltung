@@ -5,7 +5,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
         <column name="besitzer_id" type="integer" required="true" />
         <column name="projekt_id" type="integer" required="false" />
-        <column name="name" type="varchar" required="true" size="255" />
+        <column name="betreff" type="varchar" required="true" size="100" />
         <column name="text" type="clob" required="true" />
         <foreign-key foreignTable="person" phpName="Besitzer">
             <reference local="besitzer_id" foreign="id" />
