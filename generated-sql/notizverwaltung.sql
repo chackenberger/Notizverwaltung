@@ -14,7 +14,7 @@ CREATE TABLE `notiz`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `besitzer_id` INTEGER NOT NULL,
     `projekt_id` INTEGER,
-    `name` VARCHAR(255) NOT NULL,
+    `betreff` VARCHAR(100) NOT NULL,
     `text` LONGTEXT NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,

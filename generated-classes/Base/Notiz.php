@@ -92,10 +92,10 @@ abstract class Notiz implements ActiveRecordInterface
     protected $projekt_id;
 
     /**
-     * The value for the name field.
+     * The value for the betreff field.
      * @var        string
      */
-    protected $name;
+    protected $betreff;
 
     /**
      * The value for the text field.
@@ -433,13 +433,13 @@ abstract class Notiz implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
+     * Get the [betreff] column value.
      *
      * @return string
      */
-    public function getName()
+    public function getBetreff()
     {
-        return $this->name;
+        return $this->betreff;
     }
 
     /**
@@ -561,24 +561,24 @@ abstract class Notiz implements ActiveRecordInterface
     } // setProjektId()
 
     /**
-     * Set the value of [name] column.
+     * Set the value of [betreff] column.
      *
      * @param  string $v new value
      * @return $this|\Notiz The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setBetreff($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[NotizTableMap::COL_NAME] = true;
+        if ($this->betreff !== $v) {
+            $this->betreff = $v;
+            $this->modifiedColumns[NotizTableMap::COL_BETREFF] = true;
         }
 
         return $this;
-    } // setName()
+    } // setBetreff()
 
     /**
      * Set the value of [text] column.
@@ -685,8 +685,8 @@ abstract class Notiz implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : NotizTableMap::translateFieldName('ProjektId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->projekt_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : NotizTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : NotizTableMap::translateFieldName('Betreff', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->betreff = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : NotizTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
             $this->text = (null !== $col) ? (string) $col : null;
@@ -1042,8 +1042,8 @@ abstract class Notiz implements ActiveRecordInterface
         if ($this->isColumnModified(NotizTableMap::COL_PROJEKT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'projekt_id';
         }
-        if ($this->isColumnModified(NotizTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'name';
+        if ($this->isColumnModified(NotizTableMap::COL_BETREFF)) {
+            $modifiedColumns[':p' . $index++]  = 'betreff';
         }
         if ($this->isColumnModified(NotizTableMap::COL_TEXT)) {
             $modifiedColumns[':p' . $index++]  = 'text';
@@ -1074,8 +1074,8 @@ abstract class Notiz implements ActiveRecordInterface
                     case 'projekt_id':
                         $stmt->bindValue($identifier, $this->projekt_id, PDO::PARAM_INT);
                         break;
-                    case 'name':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                    case 'betreff':
+                        $stmt->bindValue($identifier, $this->betreff, PDO::PARAM_STR);
                         break;
                     case 'text':
                         $stmt->bindValue($identifier, $this->text, PDO::PARAM_STR);
@@ -1158,7 +1158,7 @@ abstract class Notiz implements ActiveRecordInterface
                 return $this->getProjektId();
                 break;
             case 3:
-                return $this->getName();
+                return $this->getBetreff();
                 break;
             case 4:
                 return $this->getText();
@@ -1202,7 +1202,7 @@ abstract class Notiz implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getBesitzerId(),
             $keys[2] => $this->getProjektId(),
-            $keys[3] => $this->getName(),
+            $keys[3] => $this->getBetreff(),
             $keys[4] => $this->getText(),
             $keys[5] => $this->getCreatedAt(),
             $keys[6] => $this->getUpdatedAt(),
@@ -1332,7 +1332,7 @@ abstract class Notiz implements ActiveRecordInterface
                 $this->setProjektId($value);
                 break;
             case 3:
-                $this->setName($value);
+                $this->setBetreff($value);
                 break;
             case 4:
                 $this->setText($value);
@@ -1379,7 +1379,7 @@ abstract class Notiz implements ActiveRecordInterface
             $this->setProjektId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setName($arr[$keys[3]]);
+            $this->setBetreff($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setText($arr[$keys[4]]);
@@ -1434,8 +1434,8 @@ abstract class Notiz implements ActiveRecordInterface
         if ($this->isColumnModified(NotizTableMap::COL_PROJEKT_ID)) {
             $criteria->add(NotizTableMap::COL_PROJEKT_ID, $this->projekt_id);
         }
-        if ($this->isColumnModified(NotizTableMap::COL_NAME)) {
-            $criteria->add(NotizTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(NotizTableMap::COL_BETREFF)) {
+            $criteria->add(NotizTableMap::COL_BETREFF, $this->betreff);
         }
         if ($this->isColumnModified(NotizTableMap::COL_TEXT)) {
             $criteria->add(NotizTableMap::COL_TEXT, $this->text);
@@ -1534,7 +1534,7 @@ abstract class Notiz implements ActiveRecordInterface
     {
         $copyObj->setBesitzerId($this->getBesitzerId());
         $copyObj->setProjektId($this->getProjektId());
-        $copyObj->setName($this->getName());
+        $copyObj->setBetreff($this->getBetreff());
         $copyObj->setText($this->getText());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -2656,7 +2656,7 @@ abstract class Notiz implements ActiveRecordInterface
         $this->id = null;
         $this->besitzer_id = null;
         $this->projekt_id = null;
-        $this->name = null;
+        $this->betreff = null;
         $this->text = null;
         $this->created_at = null;
         $this->updated_at = null;

@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNotizQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildNotizQuery orderByBesitzerId($order = Criteria::ASC) Order by the besitzer_id column
  * @method     ChildNotizQuery orderByProjektId($order = Criteria::ASC) Order by the projekt_id column
- * @method     ChildNotizQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildNotizQuery orderByBetreff($order = Criteria::ASC) Order by the betreff column
  * @method     ChildNotizQuery orderByText($order = Criteria::ASC) Order by the text column
  * @method     ChildNotizQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildNotizQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -31,7 +31,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNotizQuery groupById() Group by the id column
  * @method     ChildNotizQuery groupByBesitzerId() Group by the besitzer_id column
  * @method     ChildNotizQuery groupByProjektId() Group by the projekt_id column
- * @method     ChildNotizQuery groupByName() Group by the name column
+ * @method     ChildNotizQuery groupByBetreff() Group by the betreff column
  * @method     ChildNotizQuery groupByText() Group by the text column
  * @method     ChildNotizQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildNotizQuery groupByUpdatedAt() Group by the updated_at column
@@ -68,7 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNotiz findOneById(int $id) Return the first ChildNotiz filtered by the id column
  * @method     ChildNotiz findOneByBesitzerId(int $besitzer_id) Return the first ChildNotiz filtered by the besitzer_id column
  * @method     ChildNotiz findOneByProjektId(int $projekt_id) Return the first ChildNotiz filtered by the projekt_id column
- * @method     ChildNotiz findOneByName(string $name) Return the first ChildNotiz filtered by the name column
+ * @method     ChildNotiz findOneByBetreff(string $betreff) Return the first ChildNotiz filtered by the betreff column
  * @method     ChildNotiz findOneByText(string $text) Return the first ChildNotiz filtered by the text column
  * @method     ChildNotiz findOneByCreatedAt(string $created_at) Return the first ChildNotiz filtered by the created_at column
  * @method     ChildNotiz findOneByUpdatedAt(string $updated_at) Return the first ChildNotiz filtered by the updated_at column
@@ -77,7 +77,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNotiz[]|ObjectCollection findById(int $id) Return ChildNotiz objects filtered by the id column
  * @method     ChildNotiz[]|ObjectCollection findByBesitzerId(int $besitzer_id) Return ChildNotiz objects filtered by the besitzer_id column
  * @method     ChildNotiz[]|ObjectCollection findByProjektId(int $projekt_id) Return ChildNotiz objects filtered by the projekt_id column
- * @method     ChildNotiz[]|ObjectCollection findByName(string $name) Return ChildNotiz objects filtered by the name column
+ * @method     ChildNotiz[]|ObjectCollection findByBetreff(string $betreff) Return ChildNotiz objects filtered by the betreff column
  * @method     ChildNotiz[]|ObjectCollection findByText(string $text) Return ChildNotiz objects filtered by the text column
  * @method     ChildNotiz[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildNotiz objects filtered by the created_at column
  * @method     ChildNotiz[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildNotiz objects filtered by the updated_at column
@@ -172,7 +172,7 @@ abstract class NotizQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, besitzer_id, projekt_id, name, text, created_at, updated_at FROM notiz WHERE id = :p0';
+        $sql = 'SELECT id, besitzer_id, projekt_id, betreff, text, created_at, updated_at FROM notiz WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -390,32 +390,32 @@ abstract class NotizQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name column
+     * Filter the query on the betreff column
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByBetreff('fooValue');   // WHERE betreff = 'fooValue'
+     * $query->filterByBetreff('%fooValue%'); // WHERE betreff LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $name The value to use as filter.
+     * @param     string $betreff The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNotizQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByBetreff($betreff = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($name)) {
+            if (is_array($betreff)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
+            } elseif (preg_match('/[\%\*]/', $betreff)) {
+                $betreff = str_replace('*', '%', $betreff);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(NotizTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(NotizTableMap::COL_BETREFF, $betreff, $comparison);
     }
 
     /**
